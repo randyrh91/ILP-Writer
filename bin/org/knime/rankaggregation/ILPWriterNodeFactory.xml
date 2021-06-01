@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<knimeNode icon="./default.png" type="Sink" xmlns="http://knime.org/node/v2.8"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://knime.org/node/v2.10 http://knime.org/node/v2.10.xsd">
+    <name>ILP Writer</name>
+
+    <shortDescription>
+        Writes data into a file in Integer Linear Program format (ILP).
+    </shortDescription>
+    <fullDescription>
+        <intro>
+            This node saves data to a file or to a remote location denoted by an URL in LPX format for LIPS (.lpx) or LP format for SCIP (.lp).
+            Linear Program Solver (LiPS) is an optimization package intended for solving linear, integer
+            and goal programming problems. SCIP is currently one of the fastest non-commercial solvers for mixed integer programming (MIP) and mixed integer nonlinear programming (MINLP).
+            In the configuration dialog, specify a format to generate the file(.lpx or .lp ), the variant(Original Formulation, Reduced Variables Formulation or Reduced Variables and Constraints Formulation) and a
+            valid destination location. When executed, the node writes the data, coming through its input port in the
+            selected format and variant, into the specified location.
+            <br/>
+            Note that if the destination location is a remote URL not all options are available because in general it's
+            not possible to determine whether the remote location exists. In this case it will always be overwritten.
+        </intro>
+        <option name="Format">
+            Select the format file.
+            LPX format create the model in algebraic input mode for LIPS (.lpx) and LP format create the model in algebraic input mode for SCIP (.lp) 
+        </option>
+        <option name="Variant">
+            Select the variant to generate the file.
+            "Original Formulation" is the original formulation of the problem, "Reduced Variables Formulation" is an alternative formulation to the original formulation with reduced
+            variables and "Reduced Variables and Constraints Formulation" is an alternative formulation to the original formulation with reduced
+            variables and constraints.
+        </option>
+        <option name="File Chooser">
+            Enter a valid file name or URL. You can also choose a previously selected location from the drop-down list,
+            or select a local file from the "Browse..." dialog.
+        </option>
+        <option name="Overwrite OK">
+            If unchecked, the node refuses to execute when the output file exists (prevent unintentional overwrite).
+        </option>
+    </fullDescription>
+    <ports>
+        <inPort index="0" name="Input table">The precedence matrix to be written to the ILP file</inPort>
+    </ports>
+</knimeNode>

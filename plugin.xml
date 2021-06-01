@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin> 
+   <extension
+         point="org.knime.workbench.repository.nodes">
+      <node
+            category-path="/rank-aggregation/rank-aggregation-write"
+            factory-class="org.knime.rankaggregation.ILPWriterNodeFactory"/>
+   </extension>
+   <extension
+         point="org.knime.workbench.repository.categories">
+      <category
+            description="A category of Rank Aggregation Problem"
+            icon="src/org/knime/rankaggregation/rankaggred.png"
+            level-id="rank-aggregation"
+            locked="false"
+            name="Rank Aggregation"
+            path="/">
+      </category>
+      <category
+            description="Write of Rank Aggregation Category"
+            icon="src/org/knime/rankaggregation/write.png"
+            level-id="rank-aggregation-write"
+            locked="false"
+            name="Write"
+            path="/rank-aggregation">
+      </category>
+   </extension>
+   
+</plugin>
