@@ -38,6 +38,6 @@
         </option>
     </fullDescription>
     <ports>
-        <inPort index="0" name="Input table">The precedence matrix to be written to the ILP file</inPort>
+        <inPort index="0" name="Input table">The Precedence Matrix to be written to the ILP file</inPort>
     </ports>
 </knimeNode>

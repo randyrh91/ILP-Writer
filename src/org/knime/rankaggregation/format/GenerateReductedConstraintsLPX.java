@@ -36,7 +36,6 @@ public class GenerateReductedConstraintsLPX extends AbstractGenerateILPFile {
 
 	@Override
 	public void generate() throws IOException, CanceledExecutionException {
-		// TODO Auto-generated method stub
 		DataTableSpec columns = this.tableSpecInput.getDataTableSpec();
 		int numColumns = columns.getNumColumns();
 		try (BufferedWriter writer = openWriter(localPath, url)) {
@@ -56,7 +55,6 @@ public class GenerateReductedConstraintsLPX extends AbstractGenerateILPFile {
 			for (DataRow row : this.tableSpecInput) {
 				int numbCell = row.getNumCells();
 				for (int columnCount = rowCont; columnCount < numbCell; columnCount++) {
-					// redondear double
 					double dataCell = (double) Math
 							.round((((DoubleValue) row.getCell(columnCount)).getDoubleValue()) * 100000000d)
 							/ 100000000d;

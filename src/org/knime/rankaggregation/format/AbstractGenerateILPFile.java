@@ -12,7 +12,9 @@ import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.util.FileUtil;
 
 /**
+ * 
  * @author Randy Reyna Hernández
+ * 
  */
 
 public abstract class AbstractGenerateILPFile {

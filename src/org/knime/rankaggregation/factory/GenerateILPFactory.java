@@ -15,7 +15,9 @@ import org.knime.rankaggregation.format.GenerateReductedVariablesLP;
 import org.knime.rankaggregation.format.GenerateReductedVariablesLPX;
 
 /**
+ * 
  * @author Randy Reyna Hernández
+ * 
  */
 
 public class GenerateILPFactory extends AbstractGenerateILPFactory {

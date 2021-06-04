@@ -17,9 +17,10 @@ import org.knime.core.node.util.FilesHistoryPanel;
 import org.knime.core.util.FileUtil;
 
 /**
+ * 
  * @author Randy Reyna Hernández
  * 
- *         <code>NodeDialog</code> for the "LPXWriter" Node.
+ *         <code>NodeDialog</code> for the "ILPWriter" Node.
  * 
  *         This node dialog derives from {@link DefaultNodeSettingsPane} which
  *         allows creation of a simple dialog with standard components. If you
@@ -31,7 +32,7 @@ import org.knime.core.util.FileUtil;
 public class ILPWriterNodeDialog extends DefaultNodeSettingsPane {
 
 	/**
-	 * New pane for configuring LPXWriter node dialog. This is just a suggestion
+	 * New pane for configuring ILPWriter node dialog. This is just a suggestion
 	 * to demonstrate possible default dialog components.
 	 */
 	protected ILPWriterNodeDialog() {
@@ -82,20 +83,19 @@ public class ILPWriterNodeDialog extends DefaultNodeSettingsPane {
 
 		urlFileModelString.addChangeListener(new ChangeListener() {
 
-			@Override
-			public void stateChanged(final ChangeEvent arg0) {
-				String selFile = urlFileModelString.getStringValue().trim();
-				if (!selFile.isEmpty()) {
-					try {
-						URL newUrl = FileUtil.toURL(selFile);
-						Path path = FileUtil.resolveToPath(newUrl);
-						boolean isLocalDestination = path != null;
-						ifFileExistModelString.setEnabled(isLocalDestination);
-					} catch (IOException | URISyntaxException | InvalidPathException ex) {
-						// ignore
-					}
+		@Override
+		public void stateChanged(final ChangeEvent arg0) {
+			String selFile = urlFileModelString.getStringValue().trim();
+			if (!selFile.isEmpty()) {
+				try {
+					URL newUrl = FileUtil.toURL(selFile);
+					Path path = FileUtil.resolveToPath(newUrl);
+					boolean isLocalDestination = path != null;
+					ifFileExistModelString.setEnabled(isLocalDestination);
+				} catch (IOException | URISyntaxException | InvalidPathException ex) {
+					// ignore
 				}
 			}
-		});
+		}});
 	}
 }

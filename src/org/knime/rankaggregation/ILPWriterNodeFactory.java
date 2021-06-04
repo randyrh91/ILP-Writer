@@ -5,9 +5,10 @@ import org.knime.core.node.NodeFactory;
 import org.knime.core.node.NodeView;
 
 /**
+ * 
  * @author Randy Reyna Hernández
  * 
- *         <code>NodeFactory</code> for the "LPXWriter" Node.
+ *         <code>NodeFactory</code> for the "ILPWriter" Node.
  */
 public class ILPWriterNodeFactory extends NodeFactory<ILPWriterNodeModel> {
 

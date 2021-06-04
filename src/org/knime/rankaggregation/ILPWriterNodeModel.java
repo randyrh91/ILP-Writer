@@ -24,9 +24,10 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 /**
+ * 
  * @author Randy Reyna Hernández
  * 
- *         This is the model implementation of LPXWriter.
+ *         This is the model implementation of ILPWriter.
  * 
  */
 public class ILPWriterNodeModel extends NodeModel {

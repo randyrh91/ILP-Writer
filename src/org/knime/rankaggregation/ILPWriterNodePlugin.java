@@ -14,7 +14,6 @@ import org.osgi.framework.BundleContext;
  *         project root directory accordingly.
  */
 public class ILPWriterNodePlugin extends Plugin {
-	// The shared instance.
 	private static ILPWriterNodePlugin plugin;
 
 	/**

@@ -17,7 +17,9 @@ import org.knime.rankaggregation.ILPWriterNodeModel;
 import java.nio.file.Path;
 
 /**
+ * 
  * @author Randy Reyna Hernández
+ * 
  */
 
 public class GenerateGeneralLP extends AbstractGenerateILPFile {
