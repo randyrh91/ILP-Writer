@@ -11,8 +11,6 @@ import org.knime.core.data.DoubleValue;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionContext;
-import org.knime.core.node.NodeLogger;
-import org.knime.rankaggregation.ILPWriterNodeModel;
 
 import java.nio.file.Path;
 
@@ -22,19 +20,10 @@ import java.nio.file.Path;
  * 
  */
 
-public class GenerateGeneralLPX extends AbstractGenerateILPFile {
+public class GeneralLPX extends AbstractGeneralFile {
 
-	private static final NodeLogger LOGGER = NodeLogger.getLogger(ILPWriterNodeModel.class);
-	private BufferedDataTable tableSpecInput;
-	private Path localPath;
-	private URL url;
-	private ExecutionContext exec;
-
-	public GenerateGeneralLPX(BufferedDataTable tableSpecInput, Path localPath, URL url, ExecutionContext exec) {
-		this.tableSpecInput = tableSpecInput;
-		this.localPath = localPath;
-		this.url = url;
-		this.exec = exec;
+	public GeneralLPX(BufferedDataTable tableSpecInput, Path localPath, URL url, ExecutionContext exec) {
+		super(tableSpecInput, localPath, url, exec);
 	}
 
 	@Override

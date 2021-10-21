@@ -14,7 +14,7 @@ import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 import org.knime.core.node.util.CheckUtils;
 import org.knime.core.util.FileUtil;
-import org.knime.rankaggregation.factory.GenerateILPFactory;
+import org.knime.rankaggregation.client.ILPWriterClient;
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.ExecutionMonitor;
 import org.knime.core.node.InvalidSettingsException;
@@ -42,7 +42,7 @@ public class ILPWriterNodeModel extends NodeModel {
 	protected static final String CFGKEY_FILENAME = "FileURL";
 	protected static final String CFGKEY_IF_FILE_EXIST = "ifFileExist";
 	private URL m_url;
-	private GenerateILPFactory lpxFactory;
+	private ILPWriterClient client;
 	protected final static SettingsModelString m_format = new SettingsModelString(ILPWriterNodeModel.CFGKEY_FORMAT,
 			"LPX (LiPS)");
 	protected final static SettingsModelString m_variant = new SettingsModelString(ILPWriterNodeModel.CFGKEY_VARIANT,
@@ -69,9 +69,13 @@ public class ILPWriterNodeModel extends NodeModel {
 		m_url = FileUtil.toURL(m_file.getStringValue());
 		Path localPath = FileUtil.resolveToPath(m_url);
 		String formatValue = m_format.getStringValue();
-		String vaiantValue = m_variant.getStringValue();
-		lpxFactory = new GenerateILPFactory();
-		lpxFactory.generateLPX(formatValue, vaiantValue, inData[IN_PORT], localPath, m_url, exec);
+		String variantValue = m_variant.getStringValue();
+		BufferedDataTable table = inData[IN_PORT];
+		
+		String typeFile = variantValue.trim() + "_" + formatValue.trim();
+		client = new ILPWriterClient(m_url, localPath, table,exec);
+		client.generateFile(typeFile);;
+		
 		return new BufferedDataTable[IN_PORT];
 	}
 

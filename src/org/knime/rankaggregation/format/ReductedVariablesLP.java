@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
@@ -11,10 +12,6 @@ import org.knime.core.data.DoubleValue;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionContext;
-import org.knime.core.node.NodeLogger;
-import org.knime.rankaggregation.ILPWriterNodeModel;
-
-import java.nio.file.Path;
 
 /**
  * 
@@ -22,19 +19,11 @@ import java.nio.file.Path;
  * 
  */
 
-public class GenerateGeneralLP extends AbstractGenerateILPFile {
+public class ReductedVariablesLP extends AbstractReductedVariablesFile {
 
-	private static final NodeLogger LOGGER = NodeLogger.getLogger(ILPWriterNodeModel.class);
-	private BufferedDataTable tableSpecInput;
-	private Path localPath;
-	private URL url;
-	private ExecutionContext exec;
-
-	public GenerateGeneralLP(BufferedDataTable tableSpecInput, Path localPath, URL url, ExecutionContext exec) {
-		this.tableSpecInput = tableSpecInput;
-		this.localPath = localPath;
-		this.url = url;
-		this.exec = exec;
+	public ReductedVariablesLP(BufferedDataTable tableSpecInput, Path localPath, URL url,
+			ExecutionContext exec) {
+		super(tableSpecInput, localPath, url, exec);
 	}
 
 	@Override
@@ -53,33 +42,44 @@ public class GenerateGeneralLP extends AbstractGenerateILPFile {
 			writer.write("\n");
 			int rowCont = 1;
 			String objFunct = "";
-			ArrayList<String> variables = new ArrayList<String>();
+			ArrayList<String> realVariables = new ArrayList<String>();
+			ArrayList<String> todasVariables = new ArrayList<String>();
+			double total = 0;
 			for (DataRow row : this.tableSpecInput) {
 				int numbCell = row.getNumCells();
 				for (int columnCount = rowCont; columnCount < numbCell; columnCount++) {
-					double valueCell = (((DoubleValue) row.getCell(columnCount)).getDoubleValue());
-					double dataCell = (double) Math.round(valueCell * 100000000d) / 100000000d;
-					String Xba = "X" + (columnCount + 1) + "_" + (rowCont);
+					double dataCell = (double) Math
+							.round((((DoubleValue) row.getCell(columnCount)).getDoubleValue()) * 100000000d)
+							/ 100000000d;
 					String Xab = "X" + (rowCont) + "_" + (columnCount + 1);
-					String Qab = dataCell + " ";
-					String Qba = Math.round((1 - dataCell) * 100000000d) / 100000000d + " ";
-					String Sab = Qab + Xba + " + " + Qba + Xab;
-					variables.add(Xba);
-					variables.add(Xab);
+					String Xba = "X" + (columnCount + 1) + "_" + (rowCont);
+					double Qab = (Math.round((1 - (2 * dataCell)) * 100000000d) / 100000000d);
+					total += dataCell;
+					String Sab = Qab + " " + Xab;
+					realVariables.add(Xab);
+					todasVariables.add(Xab);
+					todasVariables.add(Xba);
 					if (objFunct.compareTo("") == 0) {
-						objFunct = " obj: " + Sab;
+						objFunct = "obj: " + Sab;
 					} else {
-						objFunct += " + " + Sab;
+						if (Qab < 0) {
+							objFunct += Sab;
+						} else {
+							objFunct += "+" + Sab;
+						}
 					}
 				}
 				rowCont++;
 			}
-			writer.write(" " + objFunct.trim());
+			writer.write(" " + objFunct + "+" + total + " F");
 			writer.write("\n");
 			writer.write("Bounds");
 			writer.write("\n");
-			for (int i = 0; i < variables.size(); i++) {
-				String variable = variables.get(i);
+			writer.write(" F = 1");
+			writer.write("\n");
+
+			for (int i = 0; i < realVariables.size(); i++) {
+				String variable = realVariables.get(i);
 				String condicion = " " + variable + " <= 1";
 				writer.write(condicion);
 				writer.write("\n");
@@ -87,56 +87,68 @@ public class GenerateGeneralLP extends AbstractGenerateILPFile {
 			writer.write("Subject To");
 			writer.write("\n");
 			int rowId = 1;
-			for (int i = 0; i < variables.size(); i = i + 2) {
-				String Xba = variables.get(i);
-				String Xab = variables.get(i + 1);
-				String condicion = " c" + rowId++ + ": " + Xab + " + " + Xba + " = 1";
-				writer.write(condicion);
-				writer.write("\n");
-				condicion = " c" + rowId++ + ": " + Xba + " + " + Xab + " = 1";
-				writer.write(condicion);
-				writer.write("\n");
-			}
-			for (int i = 0; i < variables.size(); i++) {
-				String varIzq = variables.get(i);
+			for (int i = 0; i < todasVariables.size(); i++) {
+				String varIzq = todasVariables.get(i);
 				String[] arrVarIzq = varIzq.split("_");
 				int noFin = Integer.parseInt(arrVarIzq[1]);
 				for (int j = 1; j <= numColumns; j++) {
 					String varCentro = "X" + noFin + "_" + j;
+					String varCentroInversa = "X" + j + "_" + noFin;
 					String primerNumeroArr = arrVarIzq[0].substring(1, arrVarIzq[0].length());
 					int ultimo = Integer.parseInt(primerNumeroArr);
+					String varIzqInversa = "X" + noFin + "_" + ultimo;
 					if (varIzq.compareTo(varCentro) != 0 && j != noFin && ultimo != j) {
 						String varDer = "X" + j + "_" + ultimo;
-						String condicion = " c" + rowId + ": " + varIzq + " + " + varCentro + " + " + varDer + " >= 1";
+						String varDerInversa = "X" + ultimo + "_" + j;
+						int miembroDerecho = 1;
+						String condicion = " c" + rowId + ": ";
+						if (noFin < ultimo) {
+							miembroDerecho--;
+							condicion += "- " + varIzqInversa + " ";
+						} else {
+							condicion += varIzq + " ";
+						}
+						if (noFin > j) {
+							miembroDerecho--;
+							condicion += "- " + varCentroInversa + " ";
+						} else {
+							condicion += "+ " + varCentro + " ";
+						}
+						if (j > ultimo) {
+							miembroDerecho--;
+							condicion += "- " + varDerInversa + " ";
+						} else {
+							condicion += "+ " + varDer + " ";
+						}
+						condicion += ">= " + miembroDerecho;
 						writer.write(condicion);
 						writer.write("\n");
 						rowId++;
 					}
-
 				}
 			}
 			writer.write("Binaries");
 			writer.write("\n");
-			String condicion = " ";
-			for (int i = 0; i < variables.size(); i++) {
+			String condicion = "";
+			for (int i = 0; i < realVariables.size(); i++) {
 				String variable;
-				if (i == variables.size() - 1) {
-					variable = variables.get(i);
+				if (i == realVariables.size() - 1) {
+					variable = realVariables.get(i);
 				} else {
-					variable = variables.get(i) + " ";
+					variable = realVariables.get(i) + " ";
 				}
 				condicion += " " + variable;
 			}
 			writer.write(" " + condicion.trim()+ " End");
 			exec.checkCanceled();
-		} catch (CanceledExecutionException ex) {
+		} catch (
+
+		CanceledExecutionException ex) {
 			if (localPath != null) {
 				Files.deleteIfExists(localPath);
 				LOGGER.debug("File '" + localPath + "' deleted.");
 			}
 			throw ex;
 		}
-
 	}
-
 }

@@ -12,26 +12,16 @@ import org.knime.core.data.DoubleValue;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
 import org.knime.core.node.ExecutionContext;
-import org.knime.core.node.NodeLogger;
-import org.knime.rankaggregation.ILPWriterNodeModel;
 
 /**
  * @author Randy Reyna Hernández
  */
 
-public class GenerateReductedConstraintsLPX extends AbstractGenerateILPFile {
-	private static final NodeLogger LOGGER = NodeLogger.getLogger(ILPWriterNodeModel.class);
-	private BufferedDataTable tableSpecInput;
-	private Path localPath;
-	private URL url;
-	private ExecutionContext exec;
+public class ReductedConstraintsLPX extends AbstractReductedConstraintsFile {
 
-	public GenerateReductedConstraintsLPX(BufferedDataTable tableSpecInput, Path localPath, URL url,
+	public ReductedConstraintsLPX(BufferedDataTable tableSpecInput, Path localPath, URL url,
 			ExecutionContext exec) {
-		this.tableSpecInput = tableSpecInput;
-		this.localPath = localPath;
-		this.url = url;
-		this.exec = exec;
+		super(tableSpecInput, localPath, url, exec);
 	}
 
 	@Override
